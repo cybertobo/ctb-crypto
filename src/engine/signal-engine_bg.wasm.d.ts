@@ -1,0 +1,33 @@
+/* tslint:disable */
+/* eslint-disable */
+export const memory: WebAssembly.Memory;
+export const decrypt: (a: any, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => any;
+export const derive_backup_keys: (a: number, b: number, c: number, d: number) => [number, number, number];
+export const encrypt: (a: any, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => any;
+export const fingerprint: (a: any, b: number, c: number, d: number, e: number, f: number, g: number) => any;
+export const generate_account_entropy_pool: () => [number, number];
+export const generate_prekeys: (a: any, b: number, c: number, d: number, e: number, f: number) => any;
+export const generate_registration: (a: any) => any;
+export const group_decrypt_message: (a: any, b: number, c: number, d: number, e: number) => any;
+export const group_encrypt_message: (a: any, b: number, c: number, d: number, e: number, f: number, g: number) => any;
+export const ping: () => number;
+export const process_peer_bundle: (a: any, b: number, c: number, d: any, e: number) => any;
+export const process_sender_key_distribution: (a: any, b: number, c: number, d: number, e: number) => any;
+export const sealed_sender_create_sender_cert: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => [number, number, number, number];
+export const sealed_sender_create_server_cert: (a: number, b: number, c: number) => [number, number, number];
+export const sealed_sender_decrypt_message: (a: any, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => any;
+export const sealed_sender_encrypt_message: (a: any, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => any;
+export const sealed_sender_generate_root: () => [number, number, number];
+export const self_test: () => [number, number, number, number];
+export const sender_key_distribution_message: (a: any, b: number, c: number, d: number, e: number) => any;
+export const wasm_bindgen_e614a7afa8ab1e7e___convert__closures_____invoke___wasm_bindgen_e614a7afa8ab1e7e___JsValue__core_e55ac9a380c14330___result__Result_____wasm_bindgen_e614a7afa8ab1e7e___JsError___true_: (a: number, b: number, c: any) => [number, number];
+export const wasm_bindgen_e614a7afa8ab1e7e___convert__closures_____invoke___js_sys_5811c592c0d150c8___Function_fn_wasm_bindgen_e614a7afa8ab1e7e___JsValue_____wasm_bindgen_e614a7afa8ab1e7e___sys__Undefined___js_sys_5811c592c0d150c8___Function_fn_wasm_bindgen_e614a7afa8ab1e7e___JsValue_____wasm_bindgen_e614a7afa8ab1e7e___sys__Undefined_______true_: (a: number, b: number, c: any, d: any) => void;
+export const __wbindgen_malloc: (a: number, b: number) => number;
+export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+export const __wbindgen_exn_store: (a: number) => void;
+export const __externref_table_alloc: () => number;
+export const __wbindgen_externrefs: WebAssembly.Table;
+export const __wbindgen_destroy_closure: (a: number, b: number) => void;
+export const __wbindgen_free: (a: number, b: number, c: number) => void;
+export const __externref_table_dealloc: (a: number) => void;
+export const __wbindgen_start: () => void;

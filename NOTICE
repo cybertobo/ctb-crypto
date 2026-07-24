@@ -1,0 +1,29 @@
+Cybertobo Forums — End-to-End Encryption Layer (ctb-crypto)
+Copyright (C) 2026 Cybertobo
+
+This package is the Signal-Protocol / PQXDH end-to-end encryption layer used by
+Cybertobo Forums (forums.cybertobo.com). It is licensed under the GNU Affero
+General Public License, version 3 (AGPL-3.0) — see the LICENSE file.
+
+WHY AGPL: this package is built from and links against libsignal
+(https://github.com/signalapp/libsignal), which is AGPL-3.0-only. As a work
+based on libsignal, this package and its modifications are therefore also
+AGPL-3.0. Cybertobo Forums invokes this package over a network, so under AGPL
+section 13 the corresponding source of this package is offered to users.
+
+UPSTREAM / CORRESPONDING SOURCE:
+- Base library: libsignal — https://github.com/signalapp/libsignal
+  Built from the pinned tag: v0.99.0  (AGPL-3.0-only, © Signal Messenger, LLC).
+  The unmodified upstream source lives at the URL above; this package contains
+  only Cybertobo's build recipe, wasm-glue vendoring, and thin integration
+  wrappers around libsignal's API.
+- Our modifications of interest: the wasm build recipe and the vendored glue's
+  `import.meta.url` neutralization (see the `wasm/` build scripts) and the
+  TypeScript wrappers in this package.
+
+The proprietary Cybertobo Forums application that consumes this package is a
+separate work and is NOT covered by this license; it interacts with this package
+only through the public interface exported from `index.ts`.
+
+NO WARRANTY: this program is distributed WITHOUT ANY WARRANTY; see sections 15
+and 16 of the LICENSE.
