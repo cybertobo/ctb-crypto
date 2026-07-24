@@ -73,8 +73,9 @@ flowchart LR
 | `src/pm-backup.ts` | Account-Entropy-Pool recovery-key backup (AES-256-CBC + HMAC) |
 | `src/server-signal-engine.ts` | Server-side sealed-sender certificate authority |
 | `src/engine/` | Vendored `wasm-bindgen` glue (generated) |
+| `wasm/` | Rust wrapper crate + build recipe (`build-signal-wasm.sh`, `vendor-signal-wasm.mjs`) that compile libsignal → wasm |
 
-The compiled wasm binary ships as a static asset (`/pm/signal-engine_bg.wasm`). The Rust wrapper crate + build recipe that produce it live in the repo's `crypto/` directory (also part of this AGPL-covered work).
+The compiled wasm binary ships as a static asset (`/pm/signal-engine_bg.wasm`). The Rust wrapper crate + build recipe that produce it live in **`wasm/`** in this package (`wasm/signal-wasm/`, `wasm/build-signal-wasm.sh`, `wasm/vendor-signal-wasm.mjs`) — the complete corresponding source for the wasm engine.
 
 ## 🔄 Staying current with upstream
 

@@ -1,0 +1,34 @@
+# Cybertobo Signal wasm engine — wrapper crate (source template).
+#
+# This crate is NOT built standalone. The build script (crypto/build-signal-wasm.sh)
+# copies it into a fresh clone of signalapp/libsignal (pinned tag) as the workspace
+# member `rust/bridge/wasm`, so `libsignal-protocol = { workspace = true }` resolves
+# and the workspace dependency set unifies (this is the fix for the aes-gcm-siv
+# version conflict — proven in docs/CRYPTO-E2E-SIGNAL.md §12).
+[package]
+name = "cybertobo-signal-wasm"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+libsignal-protocol = { workspace = true }
+libsignal-core = { workspace = true }
+# Crypto P1 Phase 5 — Account Entropy Pool + BackupKey for the recovery-key backup.
+libsignal-account-keys = { workspace = true }
+hkdf = { workspace = true }
+sha2 = { workspace = true }
+async-trait = { workspace = true }
+# Groups (SenderKey) — distribution_id is a Uuid in libsignal's group_cipher API.
+uuid = { workspace = true }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+rand = "0.9"
+# Two getrandom majors coexist in libsignal's tree; both need their wasm backend
+# enabled (0.3 -> wasm_js feature + the --cfg in .cargo/config; 0.2 -> js feature).
+getrandom = { version = "0.3", features = ["wasm_js"] }
+getrandom_02 = { package = "getrandom", version = "0.2", features = ["js"] }
