@@ -13,7 +13,7 @@ section 13 the corresponding source of this package is offered to users.
 
 UPSTREAM / CORRESPONDING SOURCE:
 - Base library: libsignal — https://github.com/signalapp/libsignal
-  Built from the pinned tag: v0.99.0  (AGPL-3.0-only, © Signal Messenger, LLC).
+  Built from the pinned tag: v0.99.1  (AGPL-3.0-only, © Signal Messenger, LLC).
   The unmodified upstream source lives at the URL above; this package contains
   only Cybertobo's build recipe, wasm-glue vendoring, and thin integration
   wrappers around libsignal's API.
