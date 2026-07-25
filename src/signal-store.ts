@@ -296,6 +296,21 @@ export class IndexedDbSignalStore {
     await idbPut("messages", `rx:${reactionId}`, emoji);
   }
 
+  // ── Cached sender (sealed-sender messages) ──────────────────────────────────
+  // A SEALED message hides its sender from the relay, so the true sender only
+  // comes out of the decrypted envelope — which happens exactly once (ratchet).
+  // We cache it alongside the body (same "messages" store, "snd:" key prefix) so
+  // that on reload the cached-body path can still attribute the message to the
+  // right person. Without this, cached sealed messages defaulted to "us" and
+  // incoming messages wrongly rendered as own (right-aligned). Own sent messages
+  // need no entry — the cache-hit path falls back to the local user id.
+  async getCachedSender(messageId: string): Promise<string | undefined> {
+    return idbGet<string>("messages", `snd:${messageId}`);
+  }
+  async putCachedSender(messageId: string, senderId: string): Promise<void> {
+    await idbPut("messages", `snd:${messageId}`, senderId);
+  }
+
   // ── Content-backup export / import (Phase 5) ────────────────────────────────
   // Dump every object store as [key, value] entries so the recovery-key backup can
   // archive the full device-local Signal state (identity, sessions, prekeys, and
