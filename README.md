@@ -9,7 +9,7 @@ Post-quantum, forward-secret private messaging built on the **Signal Protocol** 
 <br/>
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-A42E2B.svg?style=for-the-badge)](./LICENSE)
-[![libsignal](https://img.shields.io/badge/built_on-libsignal_v0.99.1-4C2A85?style=for-the-badge)](https://github.com/signalapp/libsignal)
+[![libsignal](https://img.shields.io/badge/built_on-libsignal_v0.99.2-4C2A85?style=for-the-badge)](https://github.com/signalapp/libsignal)
 [![WebAssembly](https://img.shields.io/badge/WebAssembly-654FF0?style=for-the-badge&logo=webassembly&logoColor=white)](https://webassembly.org/)
 
 ![Signal Protocol](https://img.shields.io/badge/Signal_Protocol-X3DH_+_Double_Ratchet-3A76F0?style=flat-square)
@@ -81,7 +81,7 @@ The compiled wasm binary ships as a static asset (`/pm/signal-engine_bg.wasm`). 
 
 This layer is **pinned** to a specific libsignal release and pulls it **directly from upstream at build time** — no fork, no divergence. A weekly CI watcher compares the pinned tag to the latest [`signalapp/libsignal`](https://github.com/signalapp/libsignal) release and opens a bump PR (with a `cargo audit` pass and a backup-derivation compatibility gate), so security fixes reach production quickly without forking away from Signal's audited source.
 
-> **Current pinned version:** `libsignal v0.99.1`
+> **Current pinned version:** `libsignal v0.99.2`
 
 ## ⚖️ License & corresponding source (AGPL-3.0)
 
