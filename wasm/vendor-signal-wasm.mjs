@@ -6,21 +6,35 @@
 // JS glue (so the bundler never resolves a co-located wasm; the wasm ships as the
 // static asset /pm/signal-engine_bg.wasm and loadSignalEngine passes the URL).
 //
-// Usage:  node crypto/vendor-signal-wasm.mjs [pkgDir]
+// Usage:  node packages/ctb-crypto/wasm/vendor-signal-wasm.mjs [pkgDir] --tag vX.Y.Z
 //   pkgDir defaults to crypto/signal-wasm/pkg (wasm-pack --out-dir). In CI, point it
 //   at the downloaded `cybertobo-signal-wasm` artifact dir.
+//
+// --tag is REQUIRED and records which libsignal tag this binary was built from into
+// wasm/shipped.json (with the wasm size + sha256). That manifest is the only machine-
+// readable record of what users actually run, and `npm run test:kernel` fails when it
+// disagrees with the LIBSIGNAL_TAG pin or with the bytes on disk. Rationale: a pin bump
+// only changes the *recipe* — CI uploads an artifact, it never commits one — so twice
+// (v0.99.3, v0.99.4) a bump was marked "done" while production still served the older
+// engine. Prose in NOTICE/README could not catch that; this can.
 //
 // Idempotent: re-running on an already-vendored engine is a no-op. Exits non-zero if
 // the glue's wasm-load fallback can't be found or neutralized (i.e. upstream changed
 // the glue shape and this script needs updating) — a loud, intentional failure.
 
-import { readFileSync, writeFileSync, copyFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, copyFileSync, existsSync, statSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, "..", "..", ".."); // packages/ctb-crypto/wasm/ -> repo root
-const pkgDir = resolve(process.argv[2] ?? join(here, "signal-wasm", "pkg"));
+
+const argv = process.argv.slice(2);
+const tagIdx = argv.indexOf("--tag");
+const tag = tagIdx === -1 ? null : argv[tagIdx + 1];
+const positional = argv.filter((a, i) => a !== "--tag" && i !== tagIdx + 1);
+const pkgDir = resolve(positional[0] ?? join(here, "signal-wasm", "pkg"));
 
 const engineDir = join(repo, "packages", "ctb-crypto", "src", "engine");
 const publicWasm = join(repo, "public", "pm", "signal-engine_bg.wasm");
@@ -49,7 +63,18 @@ function fail(msg) {
   process.exit(1);
 }
 
+// Fail BEFORE copying anything: a vendor run without --tag would leave new bytes on
+// disk with a stale shipped.json, i.e. exactly the drift this manifest exists to catch.
+if (!tag) {
+  fail(
+    "--tag vX.Y.Z is required — it records the libsignal tag these bytes were built " +
+      "from into wasm/shipped.json (asserted by `npm run test:kernel`)",
+  );
+}
+if (!/^v\d+\.\d+\.\d+$/.test(tag)) fail(`--tag must look like vX.Y.Z (got: ${tag})`);
+
 if (!existsSync(pkgDir)) fail(`pkg dir not found: ${pkgDir}`);
+
 for (const [name] of copies) {
   if (!existsSync(join(pkgDir, name))) fail(`missing ${name} in ${pkgDir}`);
 }
@@ -80,4 +105,27 @@ if (glue.includes(NEUTRALIZED)) {
 if (glue.includes("new URL('signal-engine_bg.wasm', import.meta.url)")) {
   fail("wasm-load fallback still present after neutralization");
 }
+
+// Record what was ACTUALLY shipped. This is the whole point of the script taking --tag:
+// the manifest is derived from the bytes we just wrote, so it cannot claim a tag whose
+// binary was never vendored. signal-shipped.test.ts asserts manifest == disk == pin.
+const wasmBytes = readFileSync(publicWasm);
+const manifest = {
+  _comment:
+    "MACHINE-READABLE RECORD OF THE SHIPPED libsignal BUILD. Written by " +
+    "vendor-signal-wasm.mjs, asserted by src/kernel/addons/__tests__/signal-shipped.test.ts. " +
+    "Never hand-edit to make the gate pass: the ONLY legitimate way to change this file is " +
+    "to vendor a real CI artifact. A pin bump alone must NOT touch it -- that is exactly " +
+    "the drift this file exists to catch.",
+  tag,
+  wasmBytes: statSync(publicWasm).size,
+  wasmSha256: createHash("sha256").update(wasmBytes).digest("hex"),
+  vendoredAt: new Date().toISOString().slice(0, 10),
+  ciRunId: process.env.CI_RUN_ID ?? "unknown",
+};
+writeFileSync(join(here, "shipped.json"), JSON.stringify(manifest, null, 2) + "\n");
+console.log(
+  `[vendor-signal-wasm] recorded shipped.json (tag ${tag}, ${manifest.wasmBytes} bytes, sha256 ${manifest.wasmSha256.slice(0, 12)}…)`,
+);
+
 console.log("[vendor-signal-wasm] done");

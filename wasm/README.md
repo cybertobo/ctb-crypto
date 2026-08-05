@@ -28,9 +28,16 @@ tag/version for wire compatibility.
 
 > A pin bump only changes the **recipe**. The vendored artifacts (`packages/ctb-crypto/src/engine/*`,
 > `public/pm/signal-engine_bg.wasm`) are rebuilt by the `signal-wasm` CI job and re-vendored with
-> `node packages/ctb-crypto/wasm/vendor-signal-wasm.mjs <artifactDir>`. Until that runs, the shipped
-> binary is still the previous tag's build — a green CI run is not "shipped".
+> `node packages/ctb-crypto/wasm/vendor-signal-wasm.mjs <artifactDir> --tag vX.Y.Z`. Until that runs, the
+> shipped binary is still the previous tag's build — a green CI run is not "shipped".
 >
+> **This is enforced, not just documented.** `wasm/shipped.json` records the tag, byte size and sha256 of
+> the binary users actually load; only the vendor script writes it. `npm run test:kernel` fails if that
+> manifest disagrees with `LIBSIGNAL_TAG`, with the bytes in `public/pm/`, or with `NOTICE`. It caught
+> nothing for two bumps because it did not exist — v0.99.3 and v0.99.4 were both recorded as done while
+> production still served v0.99.2. Never hand-edit `shipped.json` to silence the gate; vendor a real
+> artifact instead.
+
 > **Mandatory gate on every bump:** `npx tsx --env-file=.env scripts/_pm-compat.ts verify` must PASS. It
 > re-derives the frozen backup-key vector (`scripts/fixtures/pm-backup-compat.json`); a changed key
 > hierarchy would silently orphan every existing content backup. Never regenerate that fixture to make
@@ -45,13 +52,16 @@ wasm 1 270 707 → 1 270 606 bytes, wasm-bindgen glue byte-identical (the export
 ```bash
 gh run list --workflow "Build Signal wasm engine" --limit 1   # take the run id
 gh run download <runId> -n cybertobo-signal-wasm -D /tmp/sigwasm
-node packages/ctb-crypto/wasm/vendor-signal-wasm.mjs /tmp/sigwasm
+CI_RUN_ID=<runId> node packages/ctb-crypto/wasm/vendor-signal-wasm.mjs /tmp/sigwasm --tag vX.Y.Z
+# ^ --tag is required; it rewrites wasm/shipped.json from the bytes just vendored
 npx tsx --env-file=.env scripts/_pm-compat.ts verify   # must PASS — never regenerate the fixture
 npx tsx --env-file=.env scripts/_pm-e2e.ts             # old sessions/backups must still decrypt
-git add packages/ctb-crypto/src/engine public/pm/signal-engine_bg.wasm && git commit
+npm run test:kernel                                    # signal-shipped: manifest == disk == pin == NOTICE
+git add packages/ctb-crypto/src/engine packages/ctb-crypto/wasm/shipped.json public/pm/signal-engine_bg.wasm && git commit
 ```
 
-Then set the `NOTICE` shipped-tag line to the tag the vendored binary was built from.
+Then set the `NOTICE` shipped-tag line to the tag the vendored binary was built from — `test:kernel`
+fails until it matches, so the three records cannot drift apart silently.
 
 ## Build locally (Linux; needs rustup + wasm32 target + wasm-pack + protoc)
 
