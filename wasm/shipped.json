@@ -1,8 +1,8 @@
 {
   "_comment": "MACHINE-READABLE RECORD OF THE SHIPPED libsignal BUILD. Written by vendor-signal-wasm.mjs, asserted by src/kernel/addons/__tests__/signal-shipped.test.ts. Never hand-edit to make the gate pass: the ONLY legitimate way to change this file is to vendor a real CI artifact. A pin bump alone must NOT touch it -- that is exactly the drift this file exists to catch.",
-  "tag": "v0.99.4",
-  "wasmBytes": 1270606,
-  "wasmSha256": "a42d4d696be8502027ecf5b650f87e8794780d9c79982ea25f97aaf61ce96a83",
-  "vendoredAt": "2026-08-05",
-  "ciRunId": "30957447218"
+  "tag": "v0.100.0",
+  "wasmBytes": 1270715,
+  "wasmSha256": "a93922a9a3f197e597a9a8a692b7cf741d65446505c7393f5e26fdcaa4c3aef1",
+  "vendoredAt": "2026-08-10",
+  "ciRunId": "31348151668"
 }
