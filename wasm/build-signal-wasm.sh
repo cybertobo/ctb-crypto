@@ -14,7 +14,7 @@
 # Env overrides: LIBSIGNAL_TAG, WORK, OUT, BUILD_MODE (--release|--dev), CARGO_BUILD_JOBS.
 set -euo pipefail
 
-LIBSIGNAL_TAG="${LIBSIGNAL_TAG:-v0.100.0}"
+LIBSIGNAL_TAG="${LIBSIGNAL_TAG:-v0.101.0}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WRAPPER="$HERE/signal-wasm"
 WORK="${WORK:-/tmp/ctb-signal-wasm-build}"
