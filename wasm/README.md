@@ -13,7 +13,7 @@ Same audited code as mobile's `@signalapp/libsignal-client` — see `docs/CRYPTO
 
 ## Pinned version
 
-`LIBSIGNAL_TAG=v0.100.0` (= npm `@signalapp/libsignal-client@0.100.0`), and v0.100.0 is also the tag the
+`LIBSIGNAL_TAG=v0.101.0` (= npm `@signalapp/libsignal-client@0.101.0`), and v0.101.0 is also the tag the
 **shipped** binary was built from. **Pin, don't float** — bump deliberately with Signal's security
 releases (rationale in `docs/CRYPTO-E2E-SIGNAL.md` §6). Web and mobile must use the **same**
 tag/version for wire compatibility.
@@ -22,6 +22,7 @@ tag/version for wire compatibility.
 
 | Date       | Tag       | Upstream contents                                                                                  | Impact on this engine                                                                                                             |
 | ---------- | --------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-18 | `v0.101.0` | zkgroup: `GenericServerSecretParams`/`GenericServerPublicParams` reimplemented (no more `serde::Deserialize`, versioned call-link credentials); new `UnauthCallQualityService` and `AuthUsernamesService` typed APIs; JNI logging + bridge codegen changes. | **None functional.** `rust/protocol` and `rust/crypto` are untouched between the tags; the only change under `rust/core` is the two-line `version.rs` bump. Every other file is a Java/Node/Swift bridge, zkgroup, or a service this wrapper does not consume. No session, ratchet, cipher, or wire-format code changed. Wasm 1 270 715 → 1 270 700 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip). |
 | 2026-08-10 | `v0.100.0` | SPQR: `require_pq_ratio` removed from protocol + bridge — PQ is now required for every session; new `UnauthBackupsService.listBackupMedia`; zkgroup rejects invalid points as profile keys; bridge codegen cleanup. | **None functional.** In our dependency set only `rust/protocol` is touched, and only to delete the public helper `should_use_nonpq_session` and its re-export — this wrapper never called it, and no session/ratchet/cipher code or wire format changed. Wasm grew 1 270 606 → 1 270 715 bytes; glue byte-identical. Shipped 2026-08-10. |
 | 2026-08-05 | `v0.99.4` | `LogSafeDisplay` for `socks::Protocol`; SVRB enclave rotation (2026Q1 → previous); TCB number enforced in the enclave identity; message-backup `blockedAtTimestamp` field; Java R8 keep-rule swap. | **None functional.** Every change lands in `rust/net`, `rust/attest`, `rust/message-backup` or the Java bridge. The only file touched under `rust/core` is `version.rs`; `libsignal-protocol` and `libsignal-account-keys` are untouched. Taken to keep web ≡ mobile on one tag. Shipped 2026-08-05. |
 | 2026-08-01 | `v0.99.3` | zkgroup: `AuthCredentialWithPni` issuable without a PNI (derived "false PNI"); SVR: enforce TCB minimums on attestation. | **None functional.** Both land in `zkgroup` / `attest` — neither crate is in this wrapper's dependency set (`libsignal-protocol`, `libsignal-core`, `libsignal-account-keys`, `hkdf`, `uuid`). Pinned and CI-verified but never vendored; superseded by v0.99.4. |
@@ -46,9 +47,10 @@ tag/version for wire compatibility.
 
 ### Shipping a bump
 
-v0.100.0 was vendored from
-[run 31348151668](https://github.com/cybertobo/ctb-forums/actions/runs/31348151668) on 2026-08-10 —
-wasm 1 270 606 → 1 270 715 bytes, wasm-bindgen glue byte-identical (the exported API did not change).
+v0.101.0 was vendored from run `32094949045` on 2026-08-18 — wasm 1 270 715 → 1 270 700 bytes.
+Both gates re-run green against the vendored bytes: the backup-derivation compat fixture, and the
+browser E2E (decrypt, sealed wire, reactions, multi-device fan-out, own-device sync, device revoke,
+recovery-key backup/restore).
 
 ```bash
 gh run list --workflow "Build Signal wasm engine" --limit 1   # take the run id
@@ -56,7 +58,10 @@ gh run download <runId> -n cybertobo-signal-wasm -D /tmp/sigwasm
 CI_RUN_ID=<runId> node packages/ctb-crypto/wasm/vendor-signal-wasm.mjs /tmp/sigwasm --tag vX.Y.Z
 # ^ --tag is required; it rewrites wasm/shipped.json from the bytes just vendored
 npx tsx --env-file=.env scripts/_pm-compat.ts verify   # must PASS — never regenerate the fixture
-npx tsx --env-file=.env scripts/_pm-e2e.ts             # old sessions/backups must still decrypt
+# needs a built server already running on :3000; --conditions react-server resolves the
+# `server-only` marker to its empty stub the way Next does (the driver reaches it through
+# the login -> 2FA-email import chain and throws without it)
+npx tsx --conditions react-server --env-file=.env scripts/_pm-e2e.ts   # old sessions/backups must still decrypt
 npm run test:kernel                                    # signal-shipped: manifest == disk == pin == NOTICE
 git add packages/ctb-crypto/src/engine packages/ctb-crypto/wasm/shipped.json public/pm/signal-engine_bg.wasm && git commit
 ```
