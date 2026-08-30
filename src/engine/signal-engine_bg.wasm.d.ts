@@ -20,8 +20,8 @@ export const sealed_sender_encrypt_message: (a: any, b: number, c: number, d: nu
 export const sealed_sender_generate_root: () => [number, number, number];
 export const self_test: () => [number, number, number, number];
 export const sender_key_distribution_message: (a: any, b: number, c: number, d: number, e: number) => any;
-export const wasm_bindgen_e614a7afa8ab1e7e___convert__closures_____invoke___wasm_bindgen_e614a7afa8ab1e7e___JsValue__core_e55ac9a380c14330___result__Result_____wasm_bindgen_e614a7afa8ab1e7e___JsError___true_: (a: number, b: number, c: any) => [number, number];
-export const wasm_bindgen_e614a7afa8ab1e7e___convert__closures_____invoke___js_sys_5811c592c0d150c8___Function_fn_wasm_bindgen_e614a7afa8ab1e7e___JsValue_____wasm_bindgen_e614a7afa8ab1e7e___sys__Undefined___js_sys_5811c592c0d150c8___Function_fn_wasm_bindgen_e614a7afa8ab1e7e___JsValue_____wasm_bindgen_e614a7afa8ab1e7e___sys__Undefined_______true_: (a: number, b: number, c: any, d: any) => void;
+export const wasm_bindgen_c9f030a71d9e9078___convert__closures_____invoke___wasm_bindgen_c9f030a71d9e9078___JsValue__core_bc22e89e72665a89___result__Result_____wasm_bindgen_c9f030a71d9e9078___JsError___true_: (a: number, b: number, c: any) => [number, number];
+export const wasm_bindgen_c9f030a71d9e9078___convert__closures_____invoke___js_sys_8cf9b46d44b3f9cb___Function_fn_wasm_bindgen_c9f030a71d9e9078___JsValue_____wasm_bindgen_c9f030a71d9e9078___sys__Undefined___js_sys_8cf9b46d44b3f9cb___Function_fn_wasm_bindgen_c9f030a71d9e9078___JsValue_____wasm_bindgen_c9f030a71d9e9078___sys__Undefined_______true_: (a: number, b: number, c: any, d: any) => void;
 export const __wbindgen_malloc: (a: number, b: number) => number;
 export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
 export const __wbindgen_exn_store: (a: number) => void;

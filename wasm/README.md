@@ -13,7 +13,7 @@ Same audited code as mobile's `@signalapp/libsignal-client` — see `docs/CRYPTO
 
 ## Pinned version
 
-`LIBSIGNAL_TAG=v0.101.0` (= npm `@signalapp/libsignal-client@0.101.0`), and v0.101.0 is also the tag the
+`LIBSIGNAL_TAG=v0.101.2` (= npm `@signalapp/libsignal-client@0.101.2`), and v0.101.2 is also the tag the
 **shipped** binary was built from. **Pin, don't float** — bump deliberately with Signal's security
 releases (rationale in `docs/CRYPTO-E2E-SIGNAL.md` §6). Web and mobile must use the **same**
 tag/version for wire compatibility.
@@ -22,6 +22,7 @@ tag/version for wire compatibility.
 
 | Date       | Tag       | Upstream contents                                                                                  | Impact on this engine                                                                                                             |
 | ---------- | --------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-30 | `v0.101.2` | Rolls up v0.101.1: yanked-crate bump (chacha20 0.10.1 -> 0.10.2), `h2` update, aes-gcm-siv 0.12, ES2025 target, bridge macro removal (`jni_arg_type`/`jni_result_type`), gRPC proto sync, backup notification settings, SVR 2026Q3 enclave, `Backups.RedeemReceipt`. | **None functional.** No change to `rust/protocol` or `rust/crypto` wire, session, ratchet or cipher code; the touched crates are bridges, backups, net/attest and zkgroup, none of which this wrapper consumes. Required a build fix: libsignal now pulls getrandom 0.4, whose wasm backend is a crate feature rather than the `getrandom_backend` cfg that covers 0.3 — added as a third aliased dependency. Wasm 1 270 700 -> 1 265 445 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip). |
 | 2026-08-18 | `v0.101.0` | zkgroup: `GenericServerSecretParams`/`GenericServerPublicParams` reimplemented (no more `serde::Deserialize`, versioned call-link credentials); new `UnauthCallQualityService` and `AuthUsernamesService` typed APIs; JNI logging + bridge codegen changes. | **None functional.** `rust/protocol` and `rust/crypto` are untouched between the tags; the only change under `rust/core` is the two-line `version.rs` bump. Every other file is a Java/Node/Swift bridge, zkgroup, or a service this wrapper does not consume. No session, ratchet, cipher, or wire-format code changed. Wasm 1 270 715 → 1 270 700 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip). |
 | 2026-08-10 | `v0.100.0` | SPQR: `require_pq_ratio` removed from protocol + bridge — PQ is now required for every session; new `UnauthBackupsService.listBackupMedia`; zkgroup rejects invalid points as profile keys; bridge codegen cleanup. | **None functional.** In our dependency set only `rust/protocol` is touched, and only to delete the public helper `should_use_nonpq_session` and its re-export — this wrapper never called it, and no session/ratchet/cipher code or wire format changed. Wasm grew 1 270 606 → 1 270 715 bytes; glue byte-identical. Shipped 2026-08-10. |
 | 2026-08-05 | `v0.99.4` | `LogSafeDisplay` for `socks::Protocol`; SVRB enclave rotation (2026Q1 → previous); TCB number enforced in the enclave identity; message-backup `blockedAtTimestamp` field; Java R8 keep-rule swap. | **None functional.** Every change lands in `rust/net`, `rust/attest`, `rust/message-backup` or the Java bridge. The only file touched under `rust/core` is `version.rs`; `libsignal-protocol` and `libsignal-account-keys` are untouched. Taken to keep web ≡ mobile on one tag. Shipped 2026-08-05. |
@@ -47,7 +48,7 @@ tag/version for wire compatibility.
 
 ### Shipping a bump
 
-v0.101.0 was vendored from run `32094949045` on 2026-08-18 — wasm 1 270 715 → 1 270 700 bytes.
+v0.101.2 was vendored from run `33291734340` on 2026-08-30 — wasm 1 270 700 → 1 265 445 bytes.
 Both gates re-run green against the vendored bytes: the backup-derivation compat fixture, and the
 browser E2E (decrypt, sealed wire, reactions, multi-device fan-out, own-device sync, device revoke,
 recovery-key backup/restore).
