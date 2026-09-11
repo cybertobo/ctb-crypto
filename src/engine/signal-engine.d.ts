@@ -140,8 +140,8 @@ export interface InitOutput {
     readonly sealed_sender_generate_root: () => [number, number, number];
     readonly self_test: () => [number, number, number, number];
     readonly sender_key_distribution_message: (a: any, b: number, c: number, d: number, e: number) => any;
-    readonly wasm_bindgen_c9f030a71d9e9078___convert__closures_____invoke___wasm_bindgen_c9f030a71d9e9078___JsValue__core_bc22e89e72665a89___result__Result_____wasm_bindgen_c9f030a71d9e9078___JsError___true_: (a: number, b: number, c: any) => [number, number];
-    readonly wasm_bindgen_c9f030a71d9e9078___convert__closures_____invoke___js_sys_8cf9b46d44b3f9cb___Function_fn_wasm_bindgen_c9f030a71d9e9078___JsValue_____wasm_bindgen_c9f030a71d9e9078___sys__Undefined___js_sys_8cf9b46d44b3f9cb___Function_fn_wasm_bindgen_c9f030a71d9e9078___JsValue_____wasm_bindgen_c9f030a71d9e9078___sys__Undefined_______true_: (a: number, b: number, c: any, d: any) => void;
+    readonly wasm_bindgen_a11d39051ba43c9f___convert__closures_____invoke___wasm_bindgen_a11d39051ba43c9f___JsValue__core_ed718c3d60ebd546___result__Result_____wasm_bindgen_a11d39051ba43c9f___JsError___true_: (a: number, b: number, c: any) => [number, number];
+    readonly wasm_bindgen_a11d39051ba43c9f___convert__closures_____invoke___js_sys_89fb01fc22c234e5___Function_fn_wasm_bindgen_a11d39051ba43c9f___JsValue_____wasm_bindgen_a11d39051ba43c9f___sys__Undefined___js_sys_89fb01fc22c234e5___Function_fn_wasm_bindgen_a11d39051ba43c9f___JsValue_____wasm_bindgen_a11d39051ba43c9f___sys__Undefined_______true_: (a: number, b: number, c: any, d: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;
