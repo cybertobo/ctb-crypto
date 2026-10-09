@@ -64,7 +64,24 @@ function publishPayload(installationId: string, registrationId: number, bundle: 
  * is skipped if present, and the bundle is published at most once per device (guarded
  * by the store's `provisioned` marker). Returns the ready engine for send/receive use.
  */
-export async function provisionSignalDevice(userId: string): Promise<ProvisionedEngine> {
+export function provisionSignalDevice(userId: string): Promise<ProvisionedEngine> {
+  // Serialize per user: concurrent mounts (StrictMode, several tabs) must not each
+  // generate + publish their own identity/prekeys, or local and server keys diverge.
+  let pending = inflightProvision.get(userId);
+  if (!pending) {
+    const run = () => provisionOnce(userId);
+    const locks = typeof navigator !== "undefined" ? navigator.locks : undefined;
+    pending = (locks ? locks.request(`ctb-signal-provision:${userId}`, run) : run()).finally(() =>
+      inflightProvision.delete(userId),
+    );
+    inflightProvision.set(userId, pending);
+  }
+  return pending;
+}
+
+const inflightProvision = new Map<string, Promise<ProvisionedEngine>>();
+
+async function provisionOnce(userId: string): Promise<ProvisionedEngine> {
   const wasm = await loadSignalEngine();
   const store = new IndexedDbSignalStore();
   const engine = new CryptoEngine(wasm, store, userId);
