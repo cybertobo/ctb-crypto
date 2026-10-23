@@ -13,7 +13,7 @@ Same audited code as mobile's `@signalapp/libsignal-client` — see `docs/CRYPTO
 
 ## Pinned version
 
-`LIBSIGNAL_TAG=v0.105.0` (= npm `@signalapp/libsignal-client@0.105.0`), and v0.105.0 is also the tag the
+`LIBSIGNAL_TAG=v0.105.4` (= npm `@signalapp/libsignal-client@0.105.4`), and v0.105.4 is also the tag the
 **shipped** binary was built from. **Pin, don't float** — bump deliberately with Signal's security
 releases (rationale in `docs/CRYPTO-E2E-SIGNAL.md` §6). Web and mobile must use the **same**
 tag/version for wire compatibility.
@@ -22,6 +22,7 @@ tag/version for wire compatibility.
 
 | Date       | Tag       | Upstream contents                                                                                  | Impact on this engine                                                                                                             |
 | ---------- | --------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-23 | `v0.105.4` | Rolls up v0.105.1-v0.105.4. `rust/protocol`: additive `TryFrom<SystemTime>` for `Timestamp`; `rust/core` version bump only. Security fixes land in `rust/net` (rustls 0.23.46, rustls-webpki, distrust of compromised intermediates) and `rust/message-backup` (no allocation from untrusted lengths), neither consumed by this wrapper. | **None functional.** Wire format, ratchet and cipher unchanged; JS glue byte-identical. Wasm 1 264 085 -> 1 264 103 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip); sealed-sender + full PM browser E2E PASS. |
 | 2026-10-09 | `v0.105.0` | Rolls up v0.103.0 / v0.104.0. `rust/protocol`: a pre-key message whose identity key differs from the already-established session is now rejected as `InvalidMessage` (constant-time compare); bad-MAC warnings no longer log MAC values; `PreKeyId` made `repr(transparent)`. Remaining changes are bridges, net and service APIs this wrapper does not consume. | **Security hardening only.** Wire format, ratchet and cipher unchanged. Wasm 1 259 519 -> 1 264 085 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip); sealed-sender browser E2E PASS. |
 | 2026-08-30 | `v0.101.2` | Rolls up v0.101.1: yanked-crate bump (chacha20 0.10.1 -> 0.10.2), `h2` update, aes-gcm-siv 0.12, ES2025 target, bridge macro removal (`jni_arg_type`/`jni_result_type`), gRPC proto sync, backup notification settings, SVR 2026Q3 enclave, `Backups.RedeemReceipt`. | **None functional.** No change to `rust/protocol` or `rust/crypto` wire, session, ratchet or cipher code; the touched crates are bridges, backups, net/attest and zkgroup, none of which this wrapper consumes. Required a build fix: libsignal now pulls getrandom 0.4, whose wasm backend is a crate feature rather than the `getrandom_backend` cfg that covers 0.3 — added as a third aliased dependency. Wasm 1 270 700 -> 1 265 445 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip). |
 | 2026-08-18 | `v0.101.0` | zkgroup: `GenericServerSecretParams`/`GenericServerPublicParams` reimplemented (no more `serde::Deserialize`, versioned call-link credentials); new `UnauthCallQualityService` and `AuthUsernamesService` typed APIs; JNI logging + bridge codegen changes. | **None functional.** `rust/protocol` and `rust/crypto` are untouched between the tags; the only change under `rust/core` is the two-line `version.rs` bump. Every other file is a Java/Node/Swift bridge, zkgroup, or a service this wrapper does not consume. No session, ratchet, cipher, or wire-format code changed. Wasm 1 270 715 → 1 270 700 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip). |
@@ -49,7 +50,7 @@ tag/version for wire compatibility.
 
 ### Shipping a bump
 
-v0.105.0 was vendored from run `37880266648` on 2026-10-09 — wasm 1 259 519 → 1 264 085 bytes.
+v0.105.4 was vendored from run `39956173258` on 2026-10-23 — wasm 1 264 085 → 1 264 103 bytes.
 Both gates re-run green against the vendored bytes: the backup-derivation compat fixture, and the
 browser E2E (decrypt, sealed wire, reactions, multi-device fan-out, own-device sync, device revoke,
 recovery-key backup/restore).
