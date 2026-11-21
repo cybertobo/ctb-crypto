@@ -13,7 +13,7 @@ Same audited code as mobile's `@signalapp/libsignal-client` — see `docs/CRYPTO
 
 ## Pinned version
 
-`LIBSIGNAL_TAG=v0.108.0` (= npm `@signalapp/libsignal-client@0.108.0`), and v0.108.0 is also the tag the
+`LIBSIGNAL_TAG=v0.108.5` (= npm `@signalapp/libsignal-client@0.108.5`), and v0.108.5 is also the tag the
 **shipped** binary was built from. **Pin, don't float** — bump deliberately with Signal's security
 releases (rationale in `docs/CRYPTO-E2E-SIGNAL.md` §6). Web and mobile must use the **same**
 tag/version for wire compatibility.
@@ -22,6 +22,7 @@ tag/version for wire compatibility.
 
 | Date       | Tag       | Upstream contents                                                                                  | Impact on this engine                                                                                                             |
 | ---------- | --------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-21 | `v0.108.5` | Rolls up v0.108.1-v0.108.5. No changes in `rust/protocol` or `rust/crypto`; `rust/core` only bumps its version string. | **No behaviour change.** Wasm byte-identical to v0.108.0 (1 274 922 bytes, same sha256). Built by CI run `44863095958`. |
 | 2026-11-16 | `v0.108.0` | Rolls up v0.107.0 / v0.108.0. `rust/protocol`: last received identity stored in the session; a pre-key message using our own base key is rejected; SPQR v1.7.0; negative test for tampered SenderKeyMessage signatures. BoringSSL v5.4.0. Remaining changes are bridges, keytrans, SVR-B and service APIs this wrapper does not consume. | **Security hardening only.** Wrapper builds unchanged. Wasm 1 276 201 -> 1 274 922 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip); full PM browser E2E PASS (sealed sender, reactions, multi-device, own-device sync, device revoke, recovery-key restore). |
 | 2026-11-07 | `v0.106.2` | Rolls up v0.106.0-v0.106.2. `rust/protocol`: session management moved to a new internal implementation; session records gain fields but stay readable by older versions; archived sessions capped at 3 (was 40); `process_prekey` no longer public and `message_decrypt_prekey` returns `PreKeyDecryptResult`. No wire-format changes. | **None functional.** This wrapper calls `message_decrypt` and `process_prekey_bundle`, both unchanged. Wasm 1 264 103 -> 1 276 201 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip); full PM browser E2E PASS (sealed sender, reactions, multi-device, device revoke, recovery-key restore). |
 | 2026-10-23 | `v0.105.4` | Rolls up v0.105.1-v0.105.4. `rust/protocol`: additive `TryFrom<SystemTime>` for `Timestamp`; `rust/core` version bump only. Security fixes land in `rust/net` (rustls 0.23.46, rustls-webpki, distrust of compromised intermediates) and `rust/message-backup` (no allocation from untrusted lengths), neither consumed by this wrapper. | **None functional.** Wire format, ratchet and cipher unchanged; JS glue byte-identical. Wasm 1 264 085 -> 1 264 103 bytes. Backup-derivation compat fixture re-verified (MAC + plaintext round-trip); sealed-sender + full PM browser E2E PASS. |
@@ -52,7 +53,7 @@ tag/version for wire compatibility.
 
 ### Shipping a bump
 
-v0.108.0 was vendored from run `43900884725` on 2026-11-16 — wasm 1 276 201 → 1 274 922 bytes.
+v0.108.5 was vendored from run `44863095958` on 2026-11-21 — byte-identical to v0.108.0 (1 274 922 bytes).
 Both gates re-run green against the vendored bytes: the backup-derivation compat fixture, and the
 browser E2E (decrypt, sealed wire, reactions, multi-device fan-out, own-device sync, device revoke,
 recovery-key backup/restore).
